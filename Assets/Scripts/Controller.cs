@@ -49,12 +49,64 @@ public class Controller : MonoBehaviour
     public void InitAdjacencyLists()
     {
         //Matriz de adyacencia
-        int[,] matriu = new int[Constants.NumTiles, Constants.NumTiles];
+        int[,] matrix= new int[Constants.NumTiles, Constants.NumTiles];
 
         //TODO: Inicializar matriz a 0's
+        for(int c=0; c < Constants.NumTiles; c++)
+        {
+            for(int f=0; f< Constants.NumTiles; f++)
+            {
+                matrix[c, f] = 0;
+            }
+        }
+        /* int cont = 0;
+         for (int c = 0; c < Constants.NumTiles; c++)
+         {
+             for (int f = 0; f < Constants.NumTiles; f++)
+             {
+                 Debug.Log(matrix[c, f]);
+                 cont++;
+             }
+         }
+         Debug.Log(cont);*/
 
         //TODO: Para cada posición, rellenar con 1's las casillas adyacentes (arriba, abajo, izquierda y derecha)
+        for (int c = 0; c < Constants.NumTiles; c++)
+        {
+            int down = c - 8;
+            int up = c + 8;
+            if (down >= 0)
+            {
+                matrix[c, down] = 1;
+            }
+            if (up <= 63)
+            {
+                matrix[c, up] = 1;
+            }
+            if ( c % 8 == 7)
+            {                           
+                matrix[c, c - 1] = 1;
+            }else if (c % 8 == 0)
+            {                          
+                matrix[c, c + 1] = 1;
+            }
+            else
+            {           
+                matrix[c, c + 1] = 1;
+                matrix[c, c - 1] = 1;
+            }
+        }
 
+        int cont = 0;
+        for (int c = 0; c < Constants.NumTiles; c++)
+        {
+            for (int f = 0; f < Constants.NumTiles; f++)
+            {
+                Debug.Log("Columna "+ c+"Fila "+f+"= "+matrix[c, f]);
+                cont++;
+            }
+        }
+        Debug.Log(cont);
         //TODO: Rellenar la lista "adjacency" de cada casilla con los índices de sus casillas adyacentes
 
     }
