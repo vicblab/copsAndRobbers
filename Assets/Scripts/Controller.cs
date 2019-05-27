@@ -116,6 +116,8 @@ public class Controller : MonoBehaviour
                 tiles[c].adjacency.Add(tiles[f].numTile);
             }
         }
+
+
         /* for (int c = 0; c < Constants.NumTiles; c++)
          {
              for (int f = 0; f < tiles[c].adjacency.Count; f++)
@@ -212,7 +214,20 @@ public class Controller : MonoBehaviour
         - Movemos al caco a esa casilla
         - Actualizamos la variable currentTile del caco a la nueva casilla
         */
-        robber.GetComponent<RobberMove>().MoveToTile(tiles[robber.GetComponent<RobberMove>().currentTile]);
+        int distanceAux = 0;
+        List<Tile> lista = new List<Tile>();
+        for(int i =0; i<Constants.NumTiles; i++)
+        {
+            if(tiles[i].selectable && tiles[i].numTile != cops[0].GetComponent<CopMove>().currentTile && tiles[i].numTile != cops[1].GetComponent<CopMove>().currentTile && tiles[i].numTile != clickedTile)
+            {
+                //distanceAux= tiles[i].distance
+                lista.Add(tiles[i]);
+
+            }
+        }
+        Tile rand = lista[Random.Range(0, lista.Count)];
+        robber.GetComponent<RobberMove>().MoveToTile(rand);
+        robber.GetComponent<RobberMove>().currentTile = rand.numTile;
     }
 
     public void EndGame(bool end)
@@ -280,6 +295,10 @@ public class Controller : MonoBehaviour
              {
                  nodes.Enqueue(tiles[casilla]);
                  tiles[casilla].selectable = true;
+                if (!cop)
+                {
+                  
+                }
                  foreach (int adj in tiles[casilla].adjacency)
                  {
                      if (!nodes.Contains(tiles[adj]) && tiles[adj].numTile != cops[0].GetComponent<CopMove>().currentTile && tiles[adj].numTile != cops[1].GetComponent<CopMove>().currentTile)
@@ -297,5 +316,8 @@ public class Controller : MonoBehaviour
       
     }
    
-    
+    public void calculateDistance(Tile a, Tile b)
+    {
+
+    }
 }
