@@ -97,7 +97,7 @@ public class Controller : MonoBehaviour
             }
         }
 
-        int cont = 0;
+      /*  int cont = 0;
         for (int c = 0; c < Constants.NumTiles; c++)
         {
             for (int f = 0; f < Constants.NumTiles; f++)
@@ -106,9 +106,23 @@ public class Controller : MonoBehaviour
                 cont++;
             }
         }
-        Debug.Log(cont);
+        Debug.Log(cont);*/
         //TODO: Rellenar la lista "adjacency" de cada casilla con los índices de sus casillas adyacentes
-
+        for (int c = 0; c < Constants.NumTiles; c++)
+        {
+            for (int f = 0; f < Constants.NumTiles; f++)
+            {
+                tiles[c].adjacency.Add(matrix[c, f]);
+            }
+        }
+       /* for (int c = 0; c < Constants.NumTiles; c++)
+        {
+            for (int f = 0; f < Constants.NumTiles; f++)
+            {
+                Debug.Log("Casilla " + c + "Adjacency " + f + "= " + tiles[c].adjacency[f]);
+                
+            }
+        }*/
     }
 
     //Reseteamos cada casilla: color, padre, distancia y visitada
