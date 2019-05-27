@@ -112,17 +112,18 @@ public class Controller : MonoBehaviour
         {
             for (int f = 0; f < Constants.NumTiles; f++)
             {
-                tiles[c].adjacency.Add(matrix[c, f]);
+                if(matrix[c, f]==1)
+                tiles[c].adjacency.Add(tiles[f].numTile);
             }
         }
-       /* for (int c = 0; c < Constants.NumTiles; c++)
-        {
-            for (int f = 0; f < Constants.NumTiles; f++)
-            {
-                Debug.Log("Casilla " + c + "Adjacency " + f + "= " + tiles[c].adjacency[f]);
-                
-            }
-        }*/
+        /* for (int c = 0; c < Constants.NumTiles; c++)
+         {
+             for (int f = 0; f < tiles[c].adjacency.Count; f++)
+             {
+                 Debug.Log("Casilla " + c + "Adjacency " + f + "= " + tiles[c].adjacency[f]);
+
+             }
+         }*/
     }
 
     //Reseteamos cada casilla: color, padre, distancia y visitada
@@ -254,10 +255,10 @@ public class Controller : MonoBehaviour
 
     public void FindSelectableTiles(bool cop)
     {
-                 
-        int indexcurrentTile;        
 
-        if (cop==true)
+        int indexcurrentTile;
+
+        if (cop == true)
             indexcurrentTile = cops[clickedCop].GetComponent<CopMove>().currentTile;
         else
             indexcurrentTile = robber.GetComponent<RobberMove>().currentTile;
@@ -270,20 +271,31 @@ public class Controller : MonoBehaviour
 
         //TODO: Implementar BFS. Los nodos seleccionables los ponemos como selectable=true
         //Tendrás que cambiar este código por el BFS
-        for(int i = 0; i < Constants.NumTiles; i++)
-        {
-            tiles[i].selectable = true;
-        }
+      
 
+        //--------------------------------------------
+         foreach (int casilla in tiles[indexcurrentTile].adjacency)
+         {
+             if (tiles[casilla].numTile != cops[0].GetComponent<CopMove>().currentTile && tiles[casilla].numTile != cops[1].GetComponent<CopMove>().currentTile)
+             {
+                 nodes.Enqueue(tiles[casilla]);
+                 tiles[casilla].selectable = true;
+                 foreach (int adj in tiles[casilla].adjacency)
+                 {
+                     if (!nodes.Contains(tiles[adj]) && tiles[adj].numTile != cops[0].GetComponent<CopMove>().currentTile && tiles[adj].numTile != cops[1].GetComponent<CopMove>().currentTile)
 
+                        nodes.Enqueue(tiles[adj]);
+                    tiles[adj].selectable = true;
+                     }
+
+                 }
+             }
+         
+     
+           Debug.Log( nodes.Count);
+        
+      
     }
-    
    
     
-
-    
-
-   
-
-       
 }
