@@ -19,12 +19,14 @@ public class Controller : MonoBehaviour
     private int state;
     private int clickedTile = -1;
     private int clickedCop = 0;
-                    
+    private int[] level = new int[64];
+    private bool[] vis = new bool[64];
     void Start()
     {        
         InitTiles();
         InitAdjacencyLists();
         state = Constants.Init;
+      
     }
         
     //Rellenamos el array de casillas y posicionamos las fichas
@@ -225,10 +227,100 @@ public class Controller : MonoBehaviour
 
             }
         }
-        Tile rand = lista[Random.Range(0, lista.Count)];
-        robber.GetComponent<RobberMove>().MoveToTile(rand);
-        robber.GetComponent<RobberMove>().currentTile = rand.numTile;
+        Debug.Log("Dfs: " + BFS(clickedTile, cops[0].GetComponent<CopMove>().currentTile));
+        Debug.Log("Dfs2: " + BFS(clickedTile, cops[1].GetComponent<CopMove>().currentTile));
+        Tile there = new Tile();
+        double maxDis =0;
+        if (BFS(robber.GetComponent<RobberMove>().currentTile, cops[0].GetComponent<CopMove>().currentTile) < BFS(robber.GetComponent<RobberMove>().currentTile, cops[1].GetComponent<CopMove>().currentTile))
+        {
+            foreach (Tile c in lista)
+            {
+
+                if (BFS(c.numTile, cops[0].GetComponent<CopMove>().currentTile) > maxDis)
+                {
+                    maxDis = BFS(c.numTile, cops[0].GetComponent<CopMove>().currentTile);
+                    there = c;
+                }
+            }
+        }
+        else if (BFS(robber.GetComponent<RobberMove>().currentTile, cops[0].GetComponent<CopMove>().currentTile) > BFS(robber.GetComponent<RobberMove>().currentTile, cops[1].GetComponent<CopMove>().currentTile))
+        {
+            foreach (Tile c in lista)
+            {
+
+                if (BFS(c.numTile, cops[1].GetComponent<CopMove>().currentTile) > maxDis)
+                {
+                    maxDis = BFS(c.numTile, cops[1].GetComponent<CopMove>().currentTile);
+                    there = c;
+                }
+            }
+        }
+        else
+        {
+            foreach (Tile c in lista)
+            {
+              
+                if ((BFS(c.numTile, cops[0].GetComponent<CopMove>().currentTile) + BFS(c.numTile, cops[1].GetComponent<CopMove>().currentTile)) / 2 > maxDis)
+                {
+                    maxDis = BFS(c.numTile, cops[0].GetComponent<CopMove>().currentTile);
+                    there = c;
+                }
+              
+
+            }
+        }
+       
+        robber.GetComponent<RobberMove>().MoveToTile(there);
+        robber.GetComponent<RobberMove>().currentTile = there.numTile;
+
+        Debug.Log("Dfs: " + BFS(clickedTile, cops[0].GetComponent<CopMove>().currentTile));
+        Debug.Log("Dfs2: " + BFS(clickedTile, cops[1].GetComponent<CopMove>().currentTile));
+        
     }
+
+  
+  
+   
+    int BFS(int s, int b)
+    {
+       Queue<int> q = new Queue<int>();
+        q.Enqueue(s);
+        level[s] = 0;  
+        vis[s] = true;
+        while (q.Count!=0)
+        {
+            int p = q.Dequeue();
+           
+           foreach(int d in tiles[p].adjacency)
+            {
+               // Debug.Log("llega aqui");
+                if (vis[d] == false)
+                {
+                    
+                    level[d] = level[p] + 1;
+                    q.Enqueue(d);
+                    vis[d] = true;
+                    if (d == b)
+                    {
+                        int aux = level[d];
+                        for(int i =0; i < vis.Length; i++)
+                        {
+                            vis[i] = false;
+                        }
+                        for (int i = 0; i < level.Length; i++)
+                        {
+                            level[i] = 0;
+                        }
+                        return aux;
+                    }
+                   
+                   
+                }
+            }
+        }
+        return -1;
+    }
+   
 
     public void EndGame(bool end)
     {
@@ -270,7 +362,7 @@ public class Controller : MonoBehaviour
 
     public void FindSelectableTiles(bool cop)
     {
-
+       
         int indexcurrentTile;
 
         if (cop == true)
@@ -280,7 +372,7 @@ public class Controller : MonoBehaviour
 
         //La ponemos rosa porque acabamos de hacer un reset
         tiles[indexcurrentTile].current = true;
-
+       
         //Cola para el BFS
         Queue<Tile> nodes = new Queue<Tile>();
 
@@ -297,7 +389,7 @@ public class Controller : MonoBehaviour
                  tiles[casilla].selectable = true;
                 if (!cop)
                 {
-                  
+                   
                 }
                  foreach (int adj in tiles[casilla].adjacency)
                  {
@@ -309,9 +401,9 @@ public class Controller : MonoBehaviour
 
                  }
              }
-         
-     
-           Debug.Log( nodes.Count);
+
+        tiles[indexcurrentTile].selectable = false;
+        Debug.Log( nodes.Count);
         
       
     }
